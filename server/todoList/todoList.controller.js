@@ -10,6 +10,8 @@ const {
 const createTodoListHandler = async (req, res) => {
   try {
     const todoData = req.body;
+    const createdBy = req.user._id;
+    todoData.createdBy = createdBy;
     const newTodo = await createTodoList(todoData);
     return res
       .status(201)
@@ -23,7 +25,13 @@ const createTodoListHandler = async (req, res) => {
 
 const getAllTodoListsHandler = async (req, res) => {
   try {
-    const todos = await findTodoLists();
+    const todos = await findTodoLists(
+      { createdBy: req.user._id },
+      '',
+      { createdAt: 'desc' },
+      0,
+      [{ path: 'createdBy' }],
+    );
     if (!todos) {
       return res.status(200).json({ todos: [] });
     }
@@ -37,7 +45,9 @@ const getAllTodoListsHandler = async (req, res) => {
 const getTodoListByIdHandler = async (req, res) => {
   try {
     const todoId = req.params.todoListId;
-    const todos = await findTodoListById(todoId);
+    const populate = [{ path: 'createdBy' }];
+
+    const todos = await findTodoListById(todoId, '', populate);
     return res.status(200).json({ todos });
   } catch (error) {
     console.error(error);

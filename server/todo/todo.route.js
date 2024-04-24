@@ -19,6 +19,7 @@ const router = express.Router();
 
 router.post('/', authorize, createTodoHandler);
 router.get('/', authorize, getAllTodosHandler);
+router.get('/list/:todoListId', authorize, getAllTodosHandler);
 router.get('/:todoId', authorize, getTodoByIdHandler);
 router.put('/:todoId', authorize, updateTodoHandler);
 router.delete('/:todoId', authorize, deleteTodoHandler);

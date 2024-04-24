@@ -15,11 +15,13 @@ const findTodoLists = async (
   select = '',
   sort = { createdAt: 'desc' },
   limit = 0,
+  populate = [],
 ) => {
   return TodoList.find(matchQuery)
     .select(select)
     .sort(sort)
     .limit(limit)
+    .populate(populate)
     .lean();
 };
 
