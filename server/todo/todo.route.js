@@ -5,21 +5,22 @@ const {
   getTodoByIdHandler,
   updateTodoHandler,
   deleteTodoHandler,
-} = require('./todo.controller'); // Assuming your controller is in todo.controller.js
+} = require('./todo.controller');
 const {
   validateRequest,
   createTodoSchema,
   updateTodoSchema,
   deleteTodoSchema,
   getTodoByIdSchema,
-} = require('./todo.validation'); // Assuming your validation is in todo.validation.js
+} = require('./todo.validation');
+const authorize = require('../../middleware/auth'); // Import the middleware
 
 const router = express.Router();
 
-router.post('/', createTodoHandler);
-router.get('/', getAllTodosHandler);
-router.get('/:todoId', getTodoByIdHandler);
-router.put('/:todoId', updateTodoHandler);
-router.delete('/:todoId', deleteTodoHandler);
+router.post('/', authorize, createTodoHandler);
+router.get('/', authorize, getAllTodosHandler);
+router.get('/:todoId', authorize, getTodoByIdHandler);
+router.put('/:todoId', authorize, updateTodoHandler);
+router.delete('/:todoId', authorize, deleteTodoHandler);
 
 module.exports = router;

@@ -17,6 +17,16 @@ const TodoSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    todoList: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'TodoList',
+      required: true,
+    },
   },
   {
     timestamps: true,

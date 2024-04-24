@@ -23,4 +23,7 @@ app.use('/api/todos', todoRoutes);
 const todoListRoutes = require('./server/todoList/todoList.route');
 app.use('/api/todoLists', todoListRoutes);
 
+const userRoutes = require('./server/user/user.route');
+app.use('/api/users', userRoutes);
+
 app.listen(port, () => console.log(`Server listening on port ${port}`));

@@ -5,7 +5,6 @@ const idSchema = Joi.string()
   .required();
 
 const validateRequest = (schema) => (req, res, next) => {
-  // Determine the parts of the request to validate based on schema properties
   const requiredProperties = ['body', 'params'].filter((prop) => schema[prop]);
   const validationObject = {};
 
@@ -13,17 +12,15 @@ const validateRequest = (schema) => (req, res, next) => {
     validationObject[prop] = req[prop];
   }
 
-  // Validate based on the constructed validation object
   const { error } = schema.validate(validationObject);
   if (error) {
     return res.status(422).json({ message: error.details[0].message });
   }
-  next(); // If validation passes, continue to the route handler
+  next();
 };
 
 module.exports = {
   validateRequest,
-  // Include your individual schema definitions here
   createTodoSchema: Joi.object({
     body: Joi.object({
       title: Joi.string()
