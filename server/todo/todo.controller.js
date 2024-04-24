@@ -110,5 +110,4 @@ module.exports = {
   updateTodoHandler,
   getTodoByIdHandler,
   getAllTodosByListHandler,
-  // ... other handler functions
 };

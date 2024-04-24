@@ -1,4 +1,6 @@
 const express = require('express');
+const router = express.Router();
+
 const {
   registerCtrl,
   loginCtrl,
@@ -11,11 +13,9 @@ const {
 } = require('./user.controller');
 const authorize = require('../../middleware/auth');
 
-const router = express.Router();
-
-router.post('/login', loginCtrl);
-router.post('/register', registerCtrl);
-router.post('/forget-password', forgotPasswordCtrl);
-router.post('/reset-password', resetPasswordCtrl);
+router.route('/login').post(loginCtrl);
+router.route('/register').post(registerCtrl);
+router.route('/forget-password').post(forgotPasswordCtrl);
+router.route('/reset-password').post(resetPasswordCtrl);
 
 module.exports = router;

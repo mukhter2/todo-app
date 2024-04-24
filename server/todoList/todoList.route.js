@@ -10,10 +10,15 @@ const authorize = require('../../middleware/auth'); // Import the middleware
 
 const router = express.Router();
 
-router.post('/', authorize, createTodoListHandler);
-router.get('/', authorize, getAllTodoListsHandler);
-router.get('/:todoListId', authorize, getTodoListByIdHandler);
-router.put('/:todoListId', authorize, updateTodoListHandler);
-router.delete('/:todoListId', authorize, deleteTodoListHandler);
+router
+  .route('/')
+  .post(authorize, createTodoListHandler)
+  .get(authorize, getAllTodoListsHandler);
+
+router
+  .route('/:todoListId')
+  .get(authorize, getTodoListByIdHandler)
+  .put(authorize, updateTodoListHandler)
+  .delete(authorize, deleteTodoListHandler);
 
 module.exports = router;
