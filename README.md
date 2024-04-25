@@ -20,3 +20,6 @@ For development:
 `cp .env.dev .env`
 
 `nodemon index.js`
+
+### API Documentation
+please go to this link: https://documenter.getpostman.com/view/8802762/2sA3BrZqmr
