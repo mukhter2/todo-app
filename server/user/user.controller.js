@@ -8,7 +8,16 @@ const {
   forgotPassword,
   resetPassword,
 } = require('../../service/user/user.service');
-
+const {
+  loggerInfo,
+  loggerError,
+  infoLog,
+  errorLog,
+} = require('../../helpers/loggerInfo');
+const {
+  sendJSONresponse,
+  sendErrorResponse,
+} = require('../../helpers/jsonResponse');
 const registerCtrl = async (req, res) => {
   try {
     const { user, token } = await register(req.body);
