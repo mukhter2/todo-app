@@ -3,7 +3,7 @@
 This project uses JavaScript,MongoDB and requires Node.js and npm to be installed on your system.
 ### Prerequisites
 
-You should install `Node`, `git
+You should install `Node`, `git`
 
 ### Installing
 
