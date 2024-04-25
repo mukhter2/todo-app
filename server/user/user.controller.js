@@ -12,26 +12,47 @@ const {
 const registerCtrl = async (req, res) => {
   try {
     const { user, token } = await register(req.body);
-    res.status(201).send({ user, token });
+    infoLog('New User created Successfully');
+    return sendJSONresponse(res, 201, {
+      success: true,
+      message: 'New Todo List created successfully',
+      user,
+      token,
+    });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Registrtion failed',
+    });
   }
 };
 
 const loginCtrl = async (req, res) => {
   try {
     const { user, token } = await login(req.body.email, req.body.password);
-    res.send({ user, token });
+    return sendJSONresponse(res, 200, {
+      success: true,
+      user,
+      token,
+    });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Error during log in',
+    });
   }
 };
 const getAllUsersCtrl = async (req, res) => {
   try {
     const users = await getAllUsers();
-    res.send(users);
+    return sendJSONresponse(res, 200, {
+      users,
+    });
   } catch (error) {
-    res.status(500).send({ error: 'Failed to retrieve users' });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Failed to retrive users',
+    });
   }
 };
 
@@ -40,11 +61,19 @@ const getUserByIdCtrl = async (req, res) => {
   try {
     const user = await getUserById(id);
     if (!user) {
-      return res.status(404).send({ error: 'User not found' });
+      return sendErrorResponse(res, 404, 'NotFoundError', {
+        message: 'user not found',
+      });
     }
-    res.send(user);
+    return sendJSONresponse(res, 200, {
+      success: true,
+      user,
+    });
   } catch (error) {
-    res.status(500).send({ error: 'Failed to retrieve user' });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Failed to retrive user',
+    });
   }
 };
 
@@ -54,11 +83,20 @@ const updateUserCtrl = async (req, res) => {
   try {
     const user = await updateUser(id, updates);
     if (!user) {
-      return res.status(404).send({ error: 'User not found' });
+      return sendErrorResponse(res, 404, 'NotFoundError', {
+        message: 'user not found',
+      });
     }
-    res.send(user);
+    return sendJSONresponse(res, 200, {
+      success: true,
+      message: 'user successfully updated',
+      user,
+    });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Failed to update user',
+    });
   }
 };
 
@@ -66,9 +104,16 @@ const deleteUserCtrl = async (req, res) => {
   const id = req.params.id;
   try {
     await deleteUser(id);
-    res.send({ message: 'User deleted successfully' });
+    infoLog('User deleted successfully');
+    return sendJSONresponse(res, 200, {
+      success: true,
+      message: 'User deleted successfully',
+    });
   } catch (error) {
-    res.status(500).send({ error: 'Failed to delete user' });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Failed to delete user',
+    });
   }
 };
 
@@ -76,9 +121,16 @@ const forgotPasswordCtrl = async (req, res) => {
   const email = req.body.email;
   try {
     const resetToken = await forgotPassword(email);
-    res.send({ resetToken });
+    infoLog('forget password token successfully generated');
+    return sendJSONresponse(res, 200, {
+      success: true,
+      resetToken,
+    });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Failed to forget password for user',
+    });
   }
 };
 
@@ -87,16 +139,23 @@ const resetPasswordCtrl = async (req, res) => {
   const newPassword = req.body.newPassword;
   try {
     await resetPassword(resetToken, newPassword);
-    res.send({ message: 'Password reset successful' });
+    infoLog('Password reset successful');
+    return sendJSONresponse(res, 201, {
+      success: true,
+      message: 'Password reset successful',
+    });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 400, 'BadRequest', {
+      message: 'Failed to reset password',
+    });
   }
 };
 
 module.exports = {
   registerCtrl,
   loginCtrl,
-  getAllUsersCtrl, // Include for admin use cases with authorization
+  getAllUsersCtrl,
   getUserByIdCtrl,
   updateUserCtrl,
   deleteUserCtrl,

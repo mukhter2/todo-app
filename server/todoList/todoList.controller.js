@@ -1,3 +1,4 @@
+const { infoLog, errorLog } = require('../../helpers/loggerInfo');
 const {
   createTodoList,
   findTodoLists,
@@ -6,6 +7,7 @@ const {
   deleteTodoList,
   doesTodoListExist,
 } = require('../../service/todoList/todoList.service');
+const { findTodos, deleteTodo } = require('../../service/todo/todo.service');
 
 const createTodoListHandler = async (req, res) => {
   try {
@@ -13,13 +15,17 @@ const createTodoListHandler = async (req, res) => {
     const createdBy = req.user._id;
     todoData.createdBy = createdBy;
     const newTodo = await createTodoList(todoData);
-    return res
-      .status(201)
-      .json({ message: 'Todo List created successfully', todo: newTodo });
+    infoLog('Todo created Successfully');
+    return sendJSONresponse(res, 201, {
+      success: true,
+      message: 'New Todo List created successfully',
+      _todo: newTodo,
+    });
   } catch (error) {
-    // Handle errors
-    console.error(error);
-    return res.status(error.status || 500).json({ message: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 500, 'NotFound', {
+      message: 'Todo List Failed to be created',
+    });
   }
 };
 
@@ -33,12 +39,19 @@ const getAllTodoListsHandler = async (req, res) => {
       [{ path: 'createdBy' }],
     );
     if (!todos) {
-      return res.status(200).json({ todos: [] });
+      infoLog('No Todo list found for this user');
+      return sendJSONresponse(res, 200, {
+        _todo: [],
+      });
     }
-    return res.status(200).json({ todos });
+    return sendJSONresponse(res, 200, {
+      _todo: todos,
+    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Error retrieving todos' });
+    errorLog(error);
+    return sendErrorResponse(res, 500, 'NotFound', {
+      message: 'Error retrieving todo list',
+    });
   }
 };
 
@@ -48,10 +61,15 @@ const getTodoListByIdHandler = async (req, res) => {
     const populate = [{ path: 'createdBy' }];
 
     const todos = await findTodoListById(todoId, '', populate);
-    return res.status(200).json({ todos });
+    return sendJSONresponse(res, 200, {
+      success: true,
+      _todo: todos,
+    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Error retrieving todos' });
+    errorLog(error);
+    return sendErrorResponse(res, 500, 'NotFound', {
+      message: 'Error retrieving todo list',
+    });
   }
 };
 
@@ -60,28 +78,54 @@ const updateTodoListHandler = async (req, res) => {
     const todoId = req.params.todoListId;
     const updateData = req.body || {}; // Allow empty update data
     const updatedTodo = await updateTodoList(todoId, updateData);
-    return res
-      .status(200)
-      .json({ message: 'Todo updated successfully', todo: updatedTodo });
+    infoLog('Todo updated successfully');
+    return sendJSONresponse(res, 200, {
+      success: true,
+      message: ' Todo List updated successfully',
+      _todo: updatedTodo,
+    });
   } catch (error) {
-    // Handle errors
-    console.error(error);
-    return res.status(error.status || 500).json({ message: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 500, 'CustomError', {
+      message: 'Error updating todo list',
+    });
   }
 };
 
 const deleteTodoListHandler = async (req, res) => {
   try {
     const todoId = req.params.todoListId;
+    const todos = await findTodos(
+      { createdBy: req.user._id, todoList: todoId },
+      '',
+      { createdAt: 'desc' },
+      0,
+      [{ path: 'todoList' }, { path: 'createdBy' }],
+    );
+    for (const todo of todos) {
+      try {
+        await deleteTodo(todo._id);
+        infoLog(`Todo with ID ${todo._id} deleted successfully.`);
+      } catch (error) {
+        errorLog(`Error deleting todo with ID ${todo._id}:`, error);
+      }
+    }
     const deletedTodo = await deleteTodoList(todoId);
     if (!deletedTodo) {
-      return res.status(404).json({ message: 'Todo not found' });
+      return sendErrorResponse(res, 404, 'NotFoundError', {
+        message: 'Todo list not found',
+      });
     }
-    return res.status(200).json({ message: 'Todo deleted successfully' });
+    infoLog('Todo deleted successfully');
+    return sendJSONresponse(res, 200, {
+      success: true,
+      message: ' Todo list deleted successfully',
+    });
   } catch (error) {
-    // Handle errors
-    console.error(error);
-    return res.status(error.status || 500).json({ message: error.message });
+    errorLog(error);
+    return sendErrorResponse(res, 500, 'CustomError', {
+      message: 'Error deleting todo list',
+    });
   }
 };
 
