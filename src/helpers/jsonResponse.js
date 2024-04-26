@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const logger = require('../config/logger');
+const logger = require('../../config/logger');
 
 const sendJSONresponse = function (res, status, content) {
   res.status(status);

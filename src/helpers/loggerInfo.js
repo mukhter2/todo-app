@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const logger = require('../config/logger');
+const logger = require('../../config/logger');
 
 const loggerInfo = (str) => {
   logger.info(chalk.blueBright(str));
