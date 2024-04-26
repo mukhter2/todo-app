@@ -6,7 +6,7 @@ const {
   deleteTodo,
   doesTodoExist,
 } = require('../../service/todo/todo.service');
-const logger = require('../../config/logger');
+const logger = require('../../../config/logger');
 const {
   sendJSONresponse,
   sendErrorResponse,
